@@ -19,13 +19,13 @@ def initialize_db():
 def update_job(db_cursor, job):
     if check_job_exists(db_cursor, job['plot_id']):
         update = ", ".join([f"{key} = {value}" for key, value in job.items()])
-        db_cursor.execute(f"UPDATE jobs SET {update} WHERE plot_id = {job['plot_id']}")
+        db_cursor.execute(f"UPDATE jobs SET {update} WHERE plot_id={job['plot_id']}")
     else:
         db_cursor.execute(f"INSERT INTO jobs({', '.join(job.keys())}) VALUES({', '.join(job.values())})")
 
 
 def check_job_exists(db_cursor, plot_id):
-    job_list = db_cursor.execute(f"SELECT * FROM jobs WHERE condition WHERE plot_id = {plot_id}").fetchall()
+    job_list = db_cursor.execute(f"SELECT * FROM jobs WHERE plot_id={plot_id}").fetchall()
     return len(job_list) == 1
 
 

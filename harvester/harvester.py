@@ -29,7 +29,7 @@ class Harvester:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
             print(f"TIME: {job_file_time} JDAT: {jdat}")
-            jdat['time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
+            jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             jobs_data.append(jdat)
         # chia
         chia_data = chia_log_collection.read_chia_log()
