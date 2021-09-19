@@ -21,23 +21,20 @@ class Harvester:
     async def get_data(self):
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
-        print(all_job_files)
         jobs_data = []
         cutoff_time = datetime.datetime.now() - datetime.timedelta(hours=1)
-        print(cutoff_time)
+        print(f"cutoff_time: {cutoff_time}")
         for job_file, job_file_time in all_job_files.items():
             if job_file_time < cutoff_time:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
-            print(jdat)
+            print(f"TIME: {job_file_time} JDAT: {jdat}")
             jdat['time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             jobs_data.append(jdat)
         # chia
         chia_data = chia_log_collection.read_chia_log()
-        print(chia_data)
         # system
         system_data = system_data_collection.get_system_data()
-        print(system_data)
 
         data_dict = {
             'jobs': jobs_data,
@@ -52,10 +49,10 @@ class Harvester:
         new_data_task = asyncio.create_task(self.get_data())
         while True:
             data_dict = await new_data_task  # dictionary
-            print("DATA DICT")
-            print(data_dict)
+            print(f"DATA DICT {data_dict}")
             json_message = json.JSONEncoder().encode(data_dict)
             writer.write(json_message.encode())
+            await writer.drain()
             await asyncio.sleep(self.sleep_time)
             new_data_task = asyncio.create_task(self.get_data())
 
