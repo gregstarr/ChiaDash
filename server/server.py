@@ -40,7 +40,7 @@ FIX_DATA = {
 class Server:
 
     def __init__(self):
-        ...
+        self.harvester_n_plots = {}
 
     async def start(self):
         server = await asyncio.start_server(self.handle_new_connection, host='0.0.0.0', port=8888)
@@ -53,6 +53,7 @@ class Server:
     async def handle_new_connection(self, reader, writer):
         addr = writer.get_extra_info('peername')
         print(addr)
+        self.harvester_n_plots[addr] = None
         while True:
             try:
                 message = await reader.readuntil(b"$$$")
@@ -67,6 +68,7 @@ class Server:
                 data = self.fix_data_types(data)
                 # print(data)
                 database.update_database(data['jobs'])
+                self.harvester_n_plots[addr] = data['chia']['n_plots']
                 print(f"TOTAL PLOTS: {data['chia']['n_plots']}")
 
     def fix_data_types(self, data):

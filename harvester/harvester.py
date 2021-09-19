@@ -10,12 +10,16 @@ import system_data_collection
 
 class Harvester:
 
-    def __init__(self):
-        config_fn = pathlib.Path(__file__).parent / "config.json"
-        with open(config_fn) as f:
-            config_dict = json.load(f)
-        self.server_ip_addr = config_dict['server_ip_addr']
-        self.server_port = config_dict['server_port']
+    def __init__(self, addr=None, port=None):
+        if addr is None or port is None:
+            config_fn = pathlib.Path(__file__).parent / "config.json"
+            with open(config_fn) as f:
+                config_dict = json.load(f)
+            self.server_ip_addr = config_dict['server_ip_addr']
+            self.server_port = config_dict['server_port']
+        else:
+            self.server_ip_addr = addr
+            self.server_port = port
         self.sleep_time = 15 * 60
 
     async def get_data(self):
@@ -59,7 +63,11 @@ class Harvester:
 
 
 async def main():
-    harvester = Harvester()
+    import sys
+    if len(sys.argv) == 2:
+        harvester = Harvester(sys.argv[1], sys.argv[2])
+    else:
+        harvester = Harvester()
     await harvester.run_client()
 
 
