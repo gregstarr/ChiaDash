@@ -55,12 +55,12 @@ class Server:
         print(addr)
         while True:
             try:
-                message = await reader.read(1000)
+                message = await reader.readuntil("$$$")
             except ConnectionError:
                 print(f"{addr}: Connection lost")
                 break
             if message:
-                data = json.JSONDecoder().decode(message.decode())
+                data = json.JSONDecoder().decode(message.decode()[:-3])
                 data = self.fix_data_types(data)
                 print(data)
                 database.update_database(data['jobs'])

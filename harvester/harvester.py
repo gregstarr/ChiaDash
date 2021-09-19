@@ -51,6 +51,7 @@ class Harvester:
             data_dict = await new_data_task  # dictionary
             print(f"DATA DICT {data_dict}")
             json_message = json.JSONEncoder().encode(data_dict)
+            json_message += "$$$"
             writer.write(json_message.encode())
             await writer.drain()
             await asyncio.sleep(self.sleep_time)
