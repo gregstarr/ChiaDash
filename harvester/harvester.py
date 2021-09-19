@@ -16,7 +16,7 @@ class Harvester:
             config_dict = json.load(f)
         self.server_ip_addr = config_dict['server_ip_addr']
         self.server_port = config_dict['server_port']
-        self.sleep_time = 60
+        self.sleep_time = 15 * 60
 
     async def get_data(self):
         # jobs

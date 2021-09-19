@@ -65,8 +65,9 @@ class Server:
             if message:
                 data = json.JSONDecoder().decode(message.decode()[:-3])
                 data = self.fix_data_types(data)
-                print(data)
+                # print(data)
                 database.update_database(data['jobs'])
+                print(f"TOTAL PLOTS: {data['chia']['n_plots']}")
 
     def fix_data_types(self, data):
         for job in data['jobs']:

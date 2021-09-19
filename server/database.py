@@ -20,17 +20,17 @@ def update_job(db_cursor, job):
     if check_job_exists(db_cursor, job['plot_id']):
         update = ", ".join([f"{key} = {value}" for key, value in job.items()])
         command = f"UPDATE jobs SET {update} WHERE plot_id={job['plot_id']}"
-        print(command)
+        # print(command)
         db_cursor.execute(command)
     else:
         command = f"INSERT INTO jobs({', '.join(job.keys())}) VALUES({', '.join([str(v) for v in job.values()])})"
-        print(command)
+        # print(command)
         db_cursor.execute(command)
 
 
 def check_job_exists(db_cursor, plot_id):
     command = f"SELECT * FROM jobs WHERE plot_id={plot_id}"
-    print(command)
+    # print(command)
     job_list = db_cursor.execute(command).fetchall()
     return len(job_list) == 1
 
