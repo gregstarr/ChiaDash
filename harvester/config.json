@@ -1,0 +1,7 @@
+{
+  "chia_log_dir": "C:\\Users\\Greg\\Desktop\\chia logs\\chia",
+  "swar_log_dir": "C:\\Users\\Greg\\Desktop\\chia logs\\swar",
+  "job_log_dir": "C:\\Users\\Greg\\Desktop\\chia logs\\jobs",
+  "server_ip_addr": "192.168.1.143",
+  "server_port": "8888"
+}
