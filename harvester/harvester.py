@@ -16,13 +16,13 @@ class Harvester:
             config_dict = json.load(f)
         self.server_ip_addr = config_dict['server_ip_addr']
         self.server_port = config_dict['server_port']
-        self.sleep_time = 10
+        self.sleep_time = 60
 
     async def get_data(self):
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
-        cutoff_time = datetime.datetime.now() - datetime.timedelta(hours=1)
+        cutoff_time = datetime.datetime.now() - datetime.timedelta(days=1)
         print(f"cutoff_time: {cutoff_time}")
         for job_file, job_file_time in all_job_files.items():
             if job_file_time < cutoff_time:
