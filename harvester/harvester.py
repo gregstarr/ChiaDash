@@ -53,7 +53,7 @@ class Harvester:
         new_data_task = asyncio.create_task(self.get_data())
         while True:
             data_dict = await new_data_task  # dictionary
-            print(f"DATA DICT {data_dict}")
+            # print(f"DATA DICT {data_dict}")
             json_message = json.JSONEncoder().encode(data_dict)
             json_message += "$$$"
             writer.write(json_message.encode())
