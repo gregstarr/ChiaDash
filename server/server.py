@@ -55,18 +55,18 @@ class Server:
         print(addr)
         while True:
             try:
-                message = await reader.readuntil("$$$")
+                message = await reader.readuntil(b"$$$")
             except ConnectionError:
                 print(f"{addr}: Connection lost")
+                break
+            except asyncio.streams.IncompleteReadError:
+                print(f"{addr}: No more data")
                 break
             if message:
                 data = json.JSONDecoder().decode(message.decode()[:-3])
                 data = self.fix_data_types(data)
                 print(data)
                 database.update_database(data['jobs'])
-            else:
-                print(f"{addr}: No data")
-                break
 
     def fix_data_types(self, data):
         for job in data['jobs']:
