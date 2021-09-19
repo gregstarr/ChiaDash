@@ -64,7 +64,7 @@ class Harvester:
 
 async def main():
     import sys
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
         harvester = Harvester(sys.argv[1], sys.argv[2])
     else:
         harvester = Harvester()
