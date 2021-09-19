@@ -27,12 +27,12 @@ class Harvester:
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
         cutoff_time = datetime.datetime.now() - datetime.timedelta(days=1)
-        print(f"cutoff_time: {cutoff_time}")
+        # print(f"cutoff_time: {cutoff_time}")
         for job_file, job_file_time in all_job_files.items():
             if job_file_time < cutoff_time:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
-            print(f"TIME: {job_file_time} JDAT: {jdat}")
+            # print(f"TIME: {job_file_time} JDAT: {jdat}")
             jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             jobs_data.append(jdat)
         # chia
