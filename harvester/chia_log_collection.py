@@ -19,5 +19,5 @@ def read_chia_log(path=None):
     chia_data = {}
     matches = re.findall(r".+ plots were eligible for farming .+ Found .+ proofs\. Time: .+ s\. Total (\d+) plots", chia_log)
     print(matches[-1])
-    chia_data['n_plots'] = int(matches[-1][1])
+    chia_data['n_plots'] = int(matches[-1][0])
     return chia_data
