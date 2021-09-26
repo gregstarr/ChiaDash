@@ -35,16 +35,12 @@ def get_all_job_files(job_dir=None):
     if job_dir is None:
         job_dir = job_log_dir
     job_files = {}
-    cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
     for job_log_file in job_dir.glob("*.log"):
         match = re.search("(\d{4})-(\d{2})-\d{2}_\d{2}_\d{2}_\d{2}", job_log_file.name)
         if not match:
             print(f"JOB NAME READ ERROR: {job_log_file}")
             continue
         file_time = datetime.datetime.strptime(match.group(), "%Y-%m-%d_%H_%M_%S")
-        if file_time < cutoff:
-            os.remove(job_log_file)
-            continue
         job_files[job_log_file] = file_time
     return job_files
 

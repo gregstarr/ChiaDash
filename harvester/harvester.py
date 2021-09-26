@@ -1,6 +1,7 @@
 import asyncio
 import json
 import datetime
+import os
 import pathlib
 
 import job_log_collection
@@ -25,17 +26,23 @@ class Harvester:
     async def get_data(self, first=False):
         # system
         system_data = system_data_collection.get_system_data()
+        pids = [p['pid'] for p in system_data['job_processes']]
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
-        cutoff_time = datetime.datetime.now() - datetime.timedelta(days=1)
-        # print(f"cutoff_time: {cutoff_time}")
+        delete_cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
+        send_cutoff = datetime.datetime.now() - datetime.timedelta(days=1)
         for job_file, job_file_time in all_job_files.items():
-            if not first and job_file_time < cutoff_time:
+            if job_file_time < delete_cutoff:
+                os.remove(job_file)
+                continue
+            if not first and job_file_time < send_cutoff:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
             # print(f"TIME: {job_file_time} JDAT: {jdat}")
             jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
+            if jdat['status'] == 'in_progress' and jdat['process_id'] not in pids:
+                jdat['status'] = 'error'
             jobs_data.append(jdat)
         # chia
         chia_data = chia_log_collection.read_chia_log()
