@@ -95,8 +95,8 @@ async def job_stats():
 
 async def main():
     asyncio.create_task(s.start())
-    await app.run_task()
-    # await app.run_task(host='0.0.0.0', port=5000)
+    # await app.run_task()
+    await app.run_task(host='0.0.0.0', port=5000)
 
 
 if __name__ == "__main__":
