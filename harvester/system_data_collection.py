@@ -6,6 +6,7 @@ import psutil
 def get_system_data():
     job_processes = []
     for process in psutil.process_iter():
+        print(process.name())
         if "chia plots create" not in process.name():
             continue
         proc_dict = {
