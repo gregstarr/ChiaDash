@@ -44,7 +44,7 @@ async def current_jobs():
 async def job_stats():
     jobs = database.get_all_jobs()
     jobs = pandas.DataFrame(jobs)
-    jobs = jobs[jobs['status'] != 'in_progress']
+    jobs = jobs[jobs['status'] == 'complete']
     time_fields = ['phase1_time', 'phase2_time', 'phase3_time', 'phase4_time', 'total_time', 'copy_time']
     stats = {'all': {'N': jobs.shape[0]}}
     for field in time_fields:

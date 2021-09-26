@@ -27,7 +27,6 @@ class Harvester:
         # system
         system_data = system_data_collection.get_system_data()
         pids = [p['pid'] for p in system_data['job_processes']]
-        print(type(pids[0]), pids)
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
@@ -43,7 +42,6 @@ class Harvester:
             jdat['process_id'] = int(jdat['process_id'])
             jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             if jdat['status'] == 'in_progress' and jdat['process_id'] not in pids:
-                print("error", type(jdat['process_id']), jdat['process_id'])
                 jdat['status'] = 'error'
             jobs_data.append(jdat)
         # chia
