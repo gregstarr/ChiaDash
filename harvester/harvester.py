@@ -27,12 +27,14 @@ class Harvester:
         # system
         system_data = system_data_collection.get_system_data()
         pids = [p['pid'] for p in system_data['job_processes']]
+        print(pids)
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
         delete_cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
         send_cutoff = datetime.datetime.now() - datetime.timedelta(days=1)
         for job_file, job_file_time in all_job_files.items():
+            print(jdat['process_id'])
             if job_file_time < delete_cutoff:
                 os.remove(job_file)
                 continue
