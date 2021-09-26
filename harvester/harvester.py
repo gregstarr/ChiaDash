@@ -40,6 +40,7 @@ class Harvester:
             if not first and job_file_time < send_cutoff:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
+            jdat['process_id'] = int(jdat['process_id'])
             jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             if jdat['status'] == 'in_progress' and jdat['process_id'] not in pids:
                 print("error", type(jdat['process_id']), jdat['process_id'])

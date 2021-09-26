@@ -15,7 +15,7 @@ job_log_search_dict = {
     'phase2_time':      r"Time for phase 2 = (\d+\.\d+) seconds\.",
     'phase3_time':      r"Time for phase 3 = (\d+\.\d+) seconds\.",
     'phase4_time':      r"Time for phase 4 = (\d+\.\d+) seconds\.",
-    'total_time':    r"Total time = (\d+\.\d+) seconds\.",
+    'total_time':       r"Total time = (\d+\.\d+) seconds\.",
     'copy_time':        r"Copy time = (\d+\.\d+) seconds\.",
     'plot_size':        r"Plot size is: (\d+)\n",
     'buffer_size':      r"Buffer size is: (.+)\n",
