@@ -29,7 +29,6 @@ class Harvester:
         self.data_getters = [
             self._system_data_getter,
             self._job_data_getter,
-            self._harvester_config_getter,
         ]
         self.active_pids = None
 
@@ -50,6 +49,7 @@ class Harvester:
     async def run_client(self):
         reader, writer = await asyncio.open_connection(self.server_ip_addr, self.server_port)
         # kick off data getters
+        await self._harvester_config_getter()
         data_getter_tasks = []
         for data_getter in self.data_getters:
             data_getter_tasks.append(asyncio.create_task(data_getter()))
