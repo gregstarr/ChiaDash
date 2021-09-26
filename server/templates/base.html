@@ -1,0 +1,17 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - ChiaDash</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<nav>
+  <h1><a href="{{ url_for('index') }}">ChiaDash</a></h1>
+  <ul>
+    {% for item in navigation %}
+        <li><a href="{{ url_for(item.name) }}">{{ item.caption }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+</section>

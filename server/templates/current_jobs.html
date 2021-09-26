@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h2>{% block title %}Current Jobs{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        {% for field in current_jobs[0] %}
+        <th>{{ field }}</th>
+        {% endfor %}
+    </tr>
+    {% for job in current_jobs %}
+    <tr>
+        {% for key, value in job.items() %}
+        <td>{{ value }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

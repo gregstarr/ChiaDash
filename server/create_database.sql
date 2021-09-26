@@ -1,5 +1,6 @@
 create table jobs (
     start_time text not null,
+    harvester_ip text not null,
     temp_dir1 text not null,
     temp_dir2 text not null,
     final_dir text not null,

@@ -1,8 +1,28 @@
 import sqlite3
 import pathlib
 
-
 db_path = pathlib.Path(__file__).parent / "chiadash_database.db"
+db_fields = [
+    "start_time",
+    "harvester_ip",
+    "temp_dir1",
+    "temp_dir2",
+    "final_dir",
+    "plot_id",
+    "process_id",
+    "phase1_time",
+    "phase2_time",
+    "phase3_time",
+    "phase4_time",
+    "plotting_time",
+    "copy_time",
+    "plot_size",
+    "buffer_size",
+    "n_buckets",
+    "n_threads",
+    "stripe_size",
+    "status",
+]
 
 
 def initialize_db():
@@ -44,3 +64,19 @@ def update_database(jobs):
         update_job(db_cursor, job)
     db_connection.commit()
     db_connection.close()
+
+
+def get_current_jobs():
+    if not db_path.exists():
+        return []
+    db_connection = sqlite3.connect(db_path)
+    db_cursor = db_connection.cursor()
+    command = f"SELECT * FROM jobs WHERE status='in_progress'"
+    # print(command)
+    job_list = db_cursor.execute(command).fetchall()
+    db_connection.close()
+    job_list = [
+        {key: value for key, value in zip(db_fields, job)}
+        for job in job_list
+    ]
+    return job_list

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}N Plots{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+  <table>
+    <tr><th>Harvester IP</th><th>N Plots</th></tr>
+    {% for harvester, n_plots in harvesters.items() %}
+      <tr><td>{{ harvester[0] }}</td><td>{{ n_plots }}</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}
