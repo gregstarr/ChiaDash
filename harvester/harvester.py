@@ -21,22 +21,24 @@ class Harvester:
         else:
             self.server_ip_addr = addr
             self.server_port = port
-        self.sleep_time = 15 * 60
+        self.sleep_time = 60
 
     async def get_data(self, first=False):
+        data_time = datetime.datetime.now()
         # system
         system_data = system_data_collection.get_system_data()
+        print(system_data)
         pids = [p['pid'] for p in system_data['job_processes']]
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
-        delete_cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
+        delete_cutoff = datetime.datetime.now() - datetime.timedelta(days=60)
         send_cutoff = datetime.datetime.now() - datetime.timedelta(days=1)
         for job_file, job_file_time in all_job_files.items():
             if job_file_time < delete_cutoff:
                 os.remove(job_file)
                 continue
-            if not first and job_file_time < send_cutoff:
+            if (not first) and (job_file_time < send_cutoff):
                 continue
             jdat = job_log_collection.read_job_log(job_file)
             jdat['process_id'] = int(jdat['process_id'])
@@ -50,7 +52,8 @@ class Harvester:
         data_dict = {
             'jobs': jobs_data,
             'chia': chia_data,
-            'system': system_data
+            'system': system_data,
+            'time': data_time.strftime("%Y%m%dT%H:%M:%S"),
         }
 
         return data_dict

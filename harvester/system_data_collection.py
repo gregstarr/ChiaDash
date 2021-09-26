@@ -18,8 +18,16 @@ def get_system_data():
                 'cpu_times': process.cpu_times(),
                 'status': process.status(),
                 'memory': process.memory_full_info(),
+                'io': process.io_counters(),
             }
         job_processes.append(proc_dict)
+    disk_io = psutil.disk_io_counters(True, True)
+    temps = psutil.sensors_temperatures()
+    fans = psutil.sensors_fans()
+    battery = psutil.sensors_battery()
     return {
-        'job_processes': job_processes
+        'disk_io': disk_io,
+        'temps': temps,
+        'fans': fans,
+        'battery': battery,
     }

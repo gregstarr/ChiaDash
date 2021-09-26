@@ -69,7 +69,6 @@ class Server:
                 for job in data['jobs']:
                     job['harvester_ip'] = addr[0]
                 data = self.fix_data_types(data)
-                # print(data)
                 database.update_database(data['jobs'])
                 self.harvester_n_plots[addr] = data['chia']['n_plots']
                 print(f"TOTAL PLOTS: {data['chia']['n_plots']}")
