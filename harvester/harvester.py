@@ -23,6 +23,8 @@ class Harvester:
         self.sleep_time = 15 * 60
 
     async def get_data(self, first=False):
+        # system
+        system_data = system_data_collection.get_system_data()
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
@@ -37,8 +39,6 @@ class Harvester:
             jobs_data.append(jdat)
         # chia
         chia_data = chia_log_collection.read_chia_log()
-        # system
-        system_data = system_data_collection.get_system_data()
 
         data_dict = {
             'jobs': jobs_data,
