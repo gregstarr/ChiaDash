@@ -10,7 +10,7 @@ create table jobs (
     phase2_time real,
     phase3_time real,
     phase4_time real,
-    plotting_time real,
+    total_time real,
     copy_time real,
     plot_size int not null,
     buffer_size text not null,

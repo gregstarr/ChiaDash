@@ -19,7 +19,7 @@ FIX_DATA = {
         "phase2_time": float,
         "phase3_time": float,
         "phase4_time": float,
-        "plotting_time": float,
+        "total_time": float,
         "copy_time": float,
         "plot_size": int,
         "buffer_size": format_string,
@@ -27,7 +27,7 @@ FIX_DATA = {
         "n_threads": int,
         "stripe_size": int,
         "status": format_string,
-        "harvester": format_string,
+        "harvester_ip": format_string,
     },
     'chia': {
         "n_plots": int
@@ -67,7 +67,7 @@ class Server:
             if message:
                 data = json.JSONDecoder().decode(message.decode()[:-3])
                 for job in data['jobs']:
-                    job['harvester'] = addr[0]
+                    job['harvester_ip'] = addr[0]
                 data = self.fix_data_types(data)
                 # print(data)
                 database.update_database(data['jobs'])

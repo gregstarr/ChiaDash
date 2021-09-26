@@ -14,7 +14,7 @@ db_fields = [
     "phase2_time",
     "phase3_time",
     "phase4_time",
-    "plotting_time",
+    "total_time",
     "copy_time",
     "plot_size",
     "buffer_size",
@@ -72,6 +72,22 @@ def get_current_jobs():
     db_connection = sqlite3.connect(db_path)
     db_cursor = db_connection.cursor()
     command = f"SELECT * FROM jobs WHERE status='in_progress'"
+    # print(command)
+    job_list = db_cursor.execute(command).fetchall()
+    db_connection.close()
+    job_list = [
+        {key: value for key, value in zip(db_fields, job)}
+        for job in job_list
+    ]
+    return job_list
+
+
+def get_all_jobs():
+    if not db_path.exists():
+        return []
+    db_connection = sqlite3.connect(db_path)
+    db_cursor = db_connection.cursor()
+    command = f"SELECT * FROM jobs"
     # print(command)
     job_list = db_cursor.execute(command).fetchall()
     db_connection.close()

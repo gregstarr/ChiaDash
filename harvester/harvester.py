@@ -22,14 +22,14 @@ class Harvester:
             self.server_port = port
         self.sleep_time = 15 * 60
 
-    async def get_data(self):
+    async def get_data(self, first=False):
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
         cutoff_time = datetime.datetime.now() - datetime.timedelta(days=1)
         # print(f"cutoff_time: {cutoff_time}")
         for job_file, job_file_time in all_job_files.items():
-            if job_file_time < cutoff_time:
+            if not first and job_file_time < cutoff_time:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
             # print(f"TIME: {job_file_time} JDAT: {jdat}")
@@ -50,7 +50,7 @@ class Harvester:
 
     async def run_client(self):
         reader, writer = await asyncio.open_connection(self.server_ip_addr, self.server_port)
-        new_data_task = asyncio.create_task(self.get_data())
+        new_data_task = asyncio.create_task(self.get_data(True))
         while True:
             data_dict = await new_data_task  # dictionary
             # print(f"DATA DICT {data_dict}")

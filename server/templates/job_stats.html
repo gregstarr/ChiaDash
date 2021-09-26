@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h2>{% block title %}Jobs Stats{% endblock %}</h2>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        <th></th>
+        {% for field in job_stats['all'] %}
+        <th>{{ field }}</th>
+        {% endfor %}
+    </tr>
+    {% for population, data in job_stats.items() %}
+    <tr>
+        <th>{{ population }}</th>
+        {% for key, value in data.items() %}
+        <td>{{ value['mean'] }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
