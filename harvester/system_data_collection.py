@@ -26,6 +26,7 @@ def get_system_data():
     fans = psutil.sensors_fans()
     battery = psutil.sensors_battery()
     return {
+        'job_processes': job_processes,
         'disk_io': disk_io,
         'temps': temps,
         'fans': fans,

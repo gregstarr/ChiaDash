@@ -3,6 +3,7 @@ import json
 import datetime
 import os
 import pathlib
+import pprint
 
 import job_log_collection
 import chia_log_collection
@@ -27,7 +28,7 @@ class Harvester:
         data_time = datetime.datetime.now()
         # system
         system_data = system_data_collection.get_system_data()
-        print(system_data)
+        pprint.pprint(system_data)
         pids = [p['pid'] for p in system_data['job_processes']]
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
