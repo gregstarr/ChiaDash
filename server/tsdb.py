@@ -20,21 +20,37 @@ def get_data_dir(ip_addr, time):
     return directory
 
 
+def save_data(fn, time, data):
+    df = pandas.json_normalize(data)
+    df['time'] = time
+    if fn.exists():
+        with open(fn, 'a') as f:
+            df.to_csv(f, header=False)
+    else:
+        with open(fn, 'a') as f:
+            df.to_csv(f, header=True)
+
+
 def save_job_process_data(directory, time, data):
-    print()
+    fn = directory / "job_process_data.csv"
+    save_data(fn, time, data)
 
 
 def save_disk_io_data(directory, time, data):
-    print()
+    fn = directory / "disk_io_data.csv"
+    save_data(fn, time, data)
 
 
 def save_temps_data(directory, time, data):
-    print()
+    fn = directory / "temps_data.csv"
+    save_data(fn, time, data)
 
 
 def save_fans_data(directory, time, data):
-    print()
+    fn = directory / "fans_data.csv"
+    save_data(fn, time, data)
 
 
 def save_chia_data(directory, time, data):
-    print()
+    fn = directory / "chia_data.csv"
+    save_data(fn, time, data)

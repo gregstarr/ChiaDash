@@ -47,15 +47,17 @@ class Server:
                     self.data_handlers[packet_type](addr, data['time'], packet)
 
     def _handle_harvester_config(self, ip_addr, time, data):
+        self.connected_harvesters[ip_addr]['nic'] = None
+        self.connected_harvesters[ip_addr]['nic_addrs'] = None
         for nic, addr_dicts in data['net_addrs'].items():
             for addr_dict in addr_dicts:
                 if addr_dict['address'] == ip_addr:
                     self.connected_harvesters[ip_addr]['nic'] = nic
                     self.connected_harvesters[ip_addr]['nic_addrs'] = addr_dict
                     break
-        else:
-            self.connected_harvesters[ip_addr]['nic'] = None
-            self.connected_harvesters[ip_addr]['nic_addrs'] = None
+            else:
+                continue
+            break
         self.connected_harvesters[ip_addr].update(
             disk_parts=data['disk_parts'],
             cpu_count=data['cpu_count'],
@@ -64,7 +66,7 @@ class Server:
         )
 
     def _handle_system_data(self, ip_addr, time, data):
-        if hasattr(self.connected_harvesters[ip_addr], 'ts_data_folder'):
+        if 'ts_data_folder' in self.connected_harvesters[ip_addr]:
             directory = self.connected_harvesters[ip_addr]['ts_data_folder']
             tsdb.save_job_process_data(directory, time, data['job_processes'])
             tsdb.save_disk_io_data(directory, time, data['disk_io'])
@@ -80,7 +82,7 @@ class Server:
         database.update_database(data)
 
     def _handle_chia_data(self, ip_addr, time, data):
-        if hasattr(self.connected_harvesters[ip_addr], 'ts_data_folder'):
+        if 'ts_data_folder' in self.connected_harvesters[ip_addr]:
             directory = self.connected_harvesters[ip_addr]['ts_data_folder']
             tsdb.save_chia_data(directory, time, data)
         else:
