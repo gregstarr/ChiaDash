@@ -16,7 +16,11 @@
     <tr>
         <th>{{ population }}</th>
         {% for key, value in data.items() %}
-        <td>{{ value['mean'] }}</td>
+        {% if key=="N" %}
+        <td>{{ value }}</td>
+        {% else %}
+        <td>{{ "{.2f}".format(value['mean']) }}</td>
+        {% endif %}
         {% endfor %}
     </tr>
     {% endfor %}
