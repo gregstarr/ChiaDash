@@ -8,7 +8,8 @@
   <table>
     <tr><th>Harvester IP</th><th>N Plots</th></tr>
     {% for harvester, n_plots in harvesters.items() %}
-      <tr><td>{{ harvester[0] }}</td><td>{{ n_plots }}</td></tr>
+      <tr><td>{{ harvester }}</td><td>{{ n_plots }}</td></tr>
     {% endfor %}
   </table>
+<img src="/n_plots/plot.png" alt="my plot">
 {% endblock %}

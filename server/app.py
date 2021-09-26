@@ -1,11 +1,15 @@
 import asyncio
-from quart import Quart, render_template
+from quart import Quart, render_template, Response
 import pandas
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from io import BytesIO
 
 import server
 import database
+import tsdb
 
-
+plt.style.use('ggplot')
 app = Quart(__name__)
 s = server.Server()
 navigation = [
@@ -27,8 +31,25 @@ async def index():
 
 @app.route('/n_plots')
 async def n_plots():
-    html = await render_template("n_plots.html", harvesters=s.harvester_n_plots)
+    chia_data = tsdb.get_chia_data()
+    html = await render_template("n_plots.html",
+                                 harvesters={harv: dat['n_plots'].values[-1] for harv, dat in chia_data.items()})
     return html
+
+
+@app.route('/n_plots/plot.png')
+async def plot_png():
+    chia_data = tsdb.get_chia_data()
+    fig, ax = plt.subplots()
+    psum = 0
+    for harv, dat in chia_data.items():
+        ax.plot(dat['time'], dat['n_plots'], label=harv)
+        psum += dat['n_plots']
+    ax.plot(dat['time'], dat['n_plots'], label="sum")
+    ax.legend()
+    output = BytesIO()
+    FigureCanvasAgg(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
 
 
 @app.route('/current_jobs')
@@ -74,7 +95,8 @@ async def job_stats():
 
 async def main():
     asyncio.create_task(s.start())
-    await app.run_task(host='0.0.0.0', port=5000)
+    await app.run_task()
+    # await app.run_task(host='0.0.0.0', port=5000)
 
 
 if __name__ == "__main__":
