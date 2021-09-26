@@ -26,8 +26,8 @@ class Harvester:
     async def get_data(self, first=False):
         # system
         system_data = system_data_collection.get_system_data()
-        print(system_data)
         pids = [p['pid'] for p in system_data['job_processes']]
+        print(pids)
         # jobs
         all_job_files = job_log_collection.get_all_job_files()
         jobs_data = []
