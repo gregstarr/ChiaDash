@@ -1,7 +1,16 @@
 import sqlite3
 import pathlib
+import json
 
-db_path = pathlib.Path(__file__).parent / "chiadash_database.db"
+
+config_fn = pathlib.Path(__file__).parent / ".." / "config.json"
+with open(config_fn) as f:
+    config_dict = json.load(f)
+if config_dict['database_dir'] in ['NULL', 'None', 0]:
+    db_dir = pathlib.Path(__file__).parent
+else:
+    db_dir = pathlib.Path(config_dict['database_dir'])
+db_path = db_dir / "chiadash_database.db"
 db_fields = [
     "start_time",
     "harvester_ip",

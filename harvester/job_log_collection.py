@@ -25,7 +25,7 @@ job_log_search_dict = {
 }
 
 
-config_fn = pathlib.Path(__file__).parent / "config.json"
+config_fn = pathlib.Path(__file__).parent / ".." / "config.json"
 with open(config_fn) as f:
     config_dict = json.load(f)
 job_log_dir = pathlib.Path(config_dict['job_log_dir'])

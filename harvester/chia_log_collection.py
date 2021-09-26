@@ -3,7 +3,7 @@ import json
 import re
 
 
-config_fn = pathlib.Path(__file__).parent / "config.json"
+config_fn = pathlib.Path(__file__).parent / ".." / "config.json"
 with open(config_fn) as f:
     config_dict = json.load(f)
 chia_log_dir = pathlib.Path(config_dict['chia_log_dir'])

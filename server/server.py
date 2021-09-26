@@ -2,46 +2,19 @@ import asyncio
 import json
 
 import database
-
-
-def format_string(s): return f"'{s}'"
-
-
-FIX_DATA = {
-    'jobs': {
-        "start_time": format_string,
-        "temp_dir1": format_string,
-        "temp_dir2": format_string,
-        "final_dir": format_string,
-        "plot_id": format_string,
-        "process_id": format_string,
-        "phase1_time": float,
-        "phase2_time": float,
-        "phase3_time": float,
-        "phase4_time": float,
-        "total_time": float,
-        "copy_time": float,
-        "plot_size": int,
-        "buffer_size": format_string,
-        "n_buckets": int,
-        "n_threads": int,
-        "stripe_size": int,
-        "status": format_string,
-        "harvester_ip": format_string,
-    },
-    'chia': {
-        "n_plots": int
-    },
-    'system': {
-
-    }
-}
+import tsdb
 
 
 class Server:
 
     def __init__(self):
-        self.harvester_n_plots = {}
+        self.connected_harvesters = {}
+        self.data_handlers = {
+            'harvester_config': self._handle_harvester_config,
+            'system': self._handle_system_data,
+            'jobs': self._handle_job_data,
+            'chia': self._handle_chia_data,
+        }
 
     async def start(self):
         server = await asyncio.start_server(self.handle_new_connection, host='0.0.0.0', port=8888, limit=2 ** 20)
@@ -52,34 +25,60 @@ class Server:
             await server.serve_forever()
 
     async def handle_new_connection(self, reader, writer):
-        addr = writer.get_extra_info('peername')
-        print(addr)
-        self.harvester_n_plots[addr] = None
+        addr, port = writer.get_extra_info('peername')
+        print(addr, port)
+        self.connected_harvesters[addr] = {'port': port}
         while True:
             try:
                 message = await reader.readuntil(b"$$$")
             except ConnectionError:
                 print(f"{addr}: Connection lost")
+                del self.connected_harvesters[addr]
                 break
             except asyncio.IncompleteReadError:
                 print(f"{addr}: No more data")
+                del self.connected_harvesters[addr]
                 break
             if message:
                 data = json.JSONDecoder().decode(message.decode()[:-3])
-                for job in data['jobs']:
-                    job['harvester_ip'] = addr[0]
-                data = self.fix_data_types(data)
-                database.update_database(data['jobs'])
-                self.harvester_n_plots[addr] = data['chia']['n_plots']
-                print(f"TOTAL PLOTS: {data['chia']['n_plots']}")
+                for packet_type, packet in data.items():
+                    if packet_type is 'time':
+                        continue
+                    self.data_handlers[packet_type](addr, data['time'], packet)
 
-    def fix_data_types(self, data):
-        for job in data['jobs']:
-            for key in job:
-                job[key] = FIX_DATA['jobs'][key](job[key])
-        for key in data['chia']:
-            data['chia'][key] = FIX_DATA['chia'][key](data['chia'][key])
-        return data
+    def _handle_harvester_config(self, ip_addr, time, data):
+        for nic, addr_dicts in data['net_addrs'].items():
+            for addr_dict in addr_dicts:
+                if addr_dict['address'] == ip_addr:
+                    self.connected_harvesters[ip_addr]['nic'] = nic
+                    self.connected_harvesters[ip_addr]['nic_addrs'] = addr_dict
+                    break
+        else:
+            self.connected_harvesters[ip_addr]['nic'] = None
+            self.connected_harvesters[ip_addr]['nic_addrs'] = None
+        self.connected_harvesters[ip_addr].update(
+            disk_parts=data['disk_parts'],
+            cpu_count=data['cpu_count'],
+            time=time,
+            ts_data_folder=tsdb.get_data_dir(ip_addr, time),
+        )
+
+    def _handle_system_data(self, ip_addr, time, data):
+        directory = self.connected_harvesters[ip_addr]['ts_data_folder']
+        tsdb.save_job_process_data(directory, time, data['job_processes'])
+        tsdb.save_disk_io_data(directory, time, data['disk_io'])
+        tsdb.save_temps_data(directory, time, data['temps'])
+        tsdb.save_fans_data(directory, time, data['fans'])
+
+    def _handle_job_data(self, ip_addr, time, data):
+        self.connected_harvesters[ip_addr]['job_update'] = time
+        for job in data:
+            job['harvester_ip'] = ip_addr
+        database.update_database(data)
+
+    def _handle_chia_data(self, ip_addr, time, data):
+        directory = self.connected_harvesters[ip_addr]['ts_data_folder']
+        tsdb.save_chia_data(directory, time, data)
 
 
 async def main():
