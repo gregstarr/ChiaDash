@@ -19,7 +19,7 @@
         {% if key=="N" %}
         <td>{{ value }}</td>
         {% else %}
-        <td>{{ "{.2f}".format(value['mean']) }}</td>
+        <td>{{ "{:.2f}".format(value['mean']) }}</td>
         {% endif %}
         {% endfor %}
     </tr>
