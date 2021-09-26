@@ -34,14 +34,13 @@ class Harvester:
         delete_cutoff = datetime.datetime.now() - datetime.timedelta(days=30)
         send_cutoff = datetime.datetime.now() - datetime.timedelta(days=1)
         for job_file, job_file_time in all_job_files.items():
-            print(jdat['process_id'])
             if job_file_time < delete_cutoff:
                 os.remove(job_file)
                 continue
             if not first and job_file_time < send_cutoff:
                 continue
             jdat = job_log_collection.read_job_log(job_file)
-            # print(f"TIME: {job_file_time} JDAT: {jdat}")
+            print(jdat['process_id'])
             jdat['start_time'] = job_file_time.strftime("%Y%m%dT%H:%M:%S")
             if jdat['status'] == 'in_progress' and jdat['process_id'] not in pids:
                 jdat['status'] = 'error'
