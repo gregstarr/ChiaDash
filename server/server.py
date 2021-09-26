@@ -42,7 +42,7 @@ class Server:
             if message:
                 data = json.JSONDecoder().decode(message.decode()[:-3])
                 for packet_type, packet in data.items():
-                    if packet_type is 'time':
+                    if packet_type == 'time':
                         continue
                     self.data_handlers[packet_type](addr, data['time'], packet)
 
@@ -64,11 +64,14 @@ class Server:
         )
 
     def _handle_system_data(self, ip_addr, time, data):
-        directory = self.connected_harvesters[ip_addr]['ts_data_folder']
-        tsdb.save_job_process_data(directory, time, data['job_processes'])
-        tsdb.save_disk_io_data(directory, time, data['disk_io'])
-        tsdb.save_temps_data(directory, time, data['temps'])
-        tsdb.save_fans_data(directory, time, data['fans'])
+        if hasattr(self.connected_harvesters[ip_addr], 'ts_data_folder'):
+            directory = self.connected_harvesters[ip_addr]['ts_data_folder']
+            tsdb.save_job_process_data(directory, time, data['job_processes'])
+            tsdb.save_disk_io_data(directory, time, data['disk_io'])
+            tsdb.save_temps_data(directory, time, data['temps'])
+            tsdb.save_fans_data(directory, time, data['fans'])
+        else:
+            print("Throwing away data:", data)
 
     def _handle_job_data(self, ip_addr, time, data):
         self.connected_harvesters[ip_addr]['job_update'] = time
@@ -77,8 +80,11 @@ class Server:
         database.update_database(data)
 
     def _handle_chia_data(self, ip_addr, time, data):
-        directory = self.connected_harvesters[ip_addr]['ts_data_folder']
-        tsdb.save_chia_data(directory, time, data)
+        if hasattr(self.connected_harvesters[ip_addr], 'ts_data_folder'):
+            directory = self.connected_harvesters[ip_addr]['ts_data_folder']
+            tsdb.save_chia_data(directory, time, data)
+        else:
+            print("Throwing away data:", data)
 
 
 async def main():

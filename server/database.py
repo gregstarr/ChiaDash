@@ -2,7 +2,8 @@ import sqlite3
 import pathlib
 import json
 
-
+string_fields = ["start_time", "temp_dir1", "temp_dir2", "final_dir", "plot_id", "process_id", "buffer_size", "status",
+                 "harvester_ip"]
 config_fn = pathlib.Path(__file__).parent / ".." / "config.json"
 with open(config_fn) as f:
     config_dict = json.load(f)
@@ -46,6 +47,9 @@ def initialize_db():
 
 
 def update_job(db_cursor, job):
+    for k in job:
+        if k in string_fields:
+            job[k] = f"'{job[k]}'"
     if check_job_exists(db_cursor, job['plot_id']):
         update = ", ".join([f"{key} = {value}" for key, value in job.items()])
         command = f"UPDATE jobs SET {update} WHERE plot_id={job['plot_id']}"

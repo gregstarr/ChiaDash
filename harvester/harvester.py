@@ -35,8 +35,8 @@ class Harvester:
 
     async def _system_data_getter(self):
         while True:
-            await asyncio.sleep(60)
             self.q.put(self._get_system_data())
+            await asyncio.sleep(60)
 
     async def _job_data_getter(self):
         self.q.put(self._get_job_data(True))
