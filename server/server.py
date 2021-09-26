@@ -44,7 +44,7 @@ class Server:
         self.harvester_n_plots = {}
 
     async def start(self):
-        server = await asyncio.start_server(self.handle_new_connection, host='0.0.0.0', port=8888)
+        server = await asyncio.start_server(self.handle_new_connection, host='0.0.0.0', port=8888, limit=2 ** 20)
         addr = server.sockets[0].getsockname()
         print(f'Serving on {addr}')
 
@@ -61,7 +61,7 @@ class Server:
             except ConnectionError:
                 print(f"{addr}: Connection lost")
                 break
-            except asyncio.streams.IncompleteReadError:
+            except asyncio.IncompleteReadError:
                 print(f"{addr}: No more data")
                 break
             if message:
