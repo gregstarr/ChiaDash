@@ -49,7 +49,7 @@ class Harvester:
         return data_dict
 
     async def run_client(self):
-        reader, writer = await asyncio.open_connection(self.server_ip_addr, self.server_port)
+        reader, writer = await asyncio.open_connection(self.server_ip_addr, self.server_port, limit=2 ** 20)
         new_data_task = asyncio.create_task(self.get_data(True))
         while True:
             data_dict = await new_data_task  # dictionary
@@ -58,8 +58,8 @@ class Harvester:
             json_message += "$$$"
             writer.write(json_message.encode())
             await writer.drain()
-            await asyncio.sleep(self.sleep_time)
             new_data_task = asyncio.create_task(self.get_data())
+            await asyncio.sleep(self.sleep_time)
 
 
 async def main():
