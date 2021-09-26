@@ -2,3 +2,4 @@ psutil
 quart
 pandas
 matplotlib
+hypercorn
